@@ -1,4 +1,4 @@
-name: ADMT
+name: Copy file from dev to prod
 
 on:
   push:
@@ -6,36 +6,27 @@ on:
       - main
 
 jobs:
-  build:
+  copy-to-prod:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.9' 
-
-  copy_to_prod:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create prod directory
+      run: mkdir -p prod
+    - name: Copy file to prod
+      run: |
+        cp dev/test.py prod/test.py
+    - name: Commit and push changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "Copy test.txt to prod"
+        commit_user_name: "GitHub Actions"
+        commit_user_email: "actions@github.com"
+    
+  copy-confirmation:
     runs-on: ubuntu-latest
+    needs: copy-to-prod
     steps:
-      - name: Change directory to demoproject
-        run: |
-          cp dev/dev.txt prod/prod.txt
-      - name: Commit and push changes
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "Copy dev.py to prod"
-          commit_user_name: "GitHub Actions"
-          commit_user_email: "actions@github.com"
-
-  
-
-  copy_confirmation:
-    runs-on: ubuntu-latest
-    needs: copy_to_prod
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Run a one-line confirmation
-        run: echo "File Copied!"
+        run: echo File Copied!
