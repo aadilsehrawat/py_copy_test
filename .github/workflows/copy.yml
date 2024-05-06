@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Change directory to demoproject
         run: |
-          cp dev/dev.py prod/prod.py
+          cp dev/dev.txt prod/prod.txt
       - name: Commit and push changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
